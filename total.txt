@@ -1,0 +1,243 @@
+SERVIDOR CENTRALIZADO
+
+hostnamectl set-hostname pepito
+
+reboot
+
+yum install httpd -y 
+
+systemctl start httpd 
+
+systemctl status httpd 
+
+systemctl enable httpd
+
+firewall-cmd -permanent --zone=public-add-service-http
+
+firewall-cmd -permanent --zone=public-add-service=https
+
+firewall-cmd-reload
+
+yum install mysql mysql-server -y 
+
+systemctl start mysqld 
+
+systemctl status mysqld 
+
+systemctl enable mysqld
+
+mysql_secure_installation 
+
+mysql -u root -p 
+
+create database test; 
+
+show databases;
+
+exit;
+
+yum install php php-fpm -y
+
+php -m
+
+systemctl restart php-fpm 
+
+systemctl restart httpd
+
+cd /var/www/html
+
+yum install wget unzip nano -y
+
+wget https://wordpress.org/latest.zip unzip word
+
+
+
+
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+
+
+
+
+SERVIDOR DISTRIBUIDO
+
+SERVIDOR WORDPRESS:
+
+hostnamectl set-hostname wd server
+
+reboot
+
+yum install httpdy
+
+systemctl start httpd
+
+systemctl status httpd
+
+systemctl enable httpd.
+
+firewall-cmd-permanent-zone-public-add-service-http 
+
+firewall-cmd permanent zone-public-add-service-https
+
+firewall-cmd-permanent-zone-public-add-port-3306/tcp
+
+firewall-cmd-reload
+
+yum install php php-fpm php-mysqlnd -y
+
+systemctl restart php-fpm
+
+systemctl restart httpd
+
+cd/var/www/html
+
+yum install wget unzip nano
+
+wget https://wordpress.org/latest.zip
+
+setenforce e
+
+unzip wordpress
+
+
+SERVIDOR BD:
+
+hostnamecti set-hostname db server
+
+reboot
+
+yum install mysql mysql-server -y
+
+systemctl start mysqld
+
+systemctl status mysqld
+
+systemctl enable mysqld
+
+Firewall-cmd --permanent-zone-public-add-service-http 
+
+firewall-cmd permanent zone-public-add-service-https
+
+Firewall-cmd --permanent-zone-public-add-port-3306/tcp
+
+Firewall-cmd --reload
+
+mysql_secure_installation
+
+mysql -u root -p
+
+create database test;
+
+show databases;
+
+RENAME USER 'root'@'localhost" To 'root'@'';
+
+exit;
+
+setenforce e
+
+
+
+
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+
+
+SERVIDOR PROXY
+
+hostnamectl set-hostname proxy-server
+
+reboot
+
+yum install epel-release -у
+
+yum install squid -y
+
+systemctl start squid
+
+systemctl status squid
+
+systemctl enable squid
+
+yum install nano
+
+cd /etc/squid
+
+yum install nano
+
+nano palabras-bloqueadas
+
+nano paginas-bloqueadas
+
+nano squidconfig
+
+##en el archhivo conf de squid:
+## comento el primer parrafo
+
+acl paginas dstdomain "/etc/squid/paginas-bloqueadas" 
+
+acl palabras url_regex "/etc/squid/palabras-bloqueadas"
+
+COMENTAR HTTP ACCES LOCAAL HOST Y UNO DE SSL
+
+http_access deny palabras
+
+http_access deny paginas
+
+http_access allow all
+
+comento deny all
+
+systemctl restartr squid
+
+firewall-cmd -permanent --zone=public-add-service=squid
+
+firewall-cmd --reload
+
+
+
+-------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
+
+
+Notacion de comandos
+[*] = para ambas mv de linux 
+[B] = solo para mv backup
+[M] = solo para master
+
+Master 192.168.100.165
+Backup 192.168.100.166
+
+yum install nginx -y  [*]
+yum install keepalived -y [*]
+sestatus  [*]
+service nginx start [*]
+systemctl enable nginx [*]
+service nginx status [*]
+firewall-cmd --add-service=http --permanent --zone=public [*]
+firewall-cmd --reload [*] 
+echo "<h1> NODO 1 </h1>" | tee /usr/share/nginx/html/index.html [M]
+echo "<h1> NODO 2 </h1>" | tee /usr/share/nginx/html/index.html [B]
+yum install nano -y [*]
+nano /etc/keepalived/keepalived.conf [*]
+echo "" | tee /etc/keepalived/keepalived.conf [*]
+
+	state MASTER [m]  , BACKUP [B]
+	virtual_router_id debe ser igual 
+	priority [m] = 110 , backup [b] = 100
+
+nano /bin/check_nginx.sh  [*]
+chmod 755 /bin/check_nginx.sh  [permisos de escritura y lectura] [*]
+service keepalived start [*]
+systemctl enable keepalived
+firewall-cmd --add-rich-rule='rule protocol value="vrrp" accept' --permanent [*]
+firewall-cmd --reload [*]
+service keepalived restart [*]
+
+// consultar sincronización de la aplicación para que se la misma. 
+// se llama la sincronización manual rsync. 
+// y como sincronizar para que solo una aplicación corra en todos los clusters 
+// habilitar unos privilegios sincronizando mediante la ip. 
+// 
+
+
